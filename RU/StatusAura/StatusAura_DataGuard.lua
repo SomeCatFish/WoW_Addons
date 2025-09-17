@@ -11,7 +11,7 @@ end
 ---------------------------------------------------
 -- Variables and Functions
 ---------------------------------------------------
-local currentVersion = 185;
+local currentVersion = 190;
 local function UpToDate_Function()
     if StatusAuraVersion < currentVersion or not StatusAuraVersion then
         --================== Version 1.8.0 ==================--
@@ -33,9 +33,13 @@ local function UpToDate_Function()
         -------------------------------------------------------
 
         --================== Version 1.9.0 ==================--
-        -- if StatusAuraVersion < 190 or not StatusAuraVersion then
-        --
-        -- end
+        if StatusAuraVersion < 190 or not StatusAuraVersion then
+            if StatAurasSyncModule then
+                StatAurasSyncModule.autoWhitelist = true;
+                StatAurasSyncModule.whitelistMode = false;
+                StatAurasSyncModule.raidMode = true;
+            end
+        end
         -------------------------------------------------------
         StatusAuraVersion = currentVersion;
 

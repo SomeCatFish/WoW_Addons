@@ -26,10 +26,11 @@ if StatAurasSyncModule == nil then
 	StatAurasSyncModule.customSender = nil;
 	StatAurasSyncModule.isGM = false;
 	StatAurasSyncModule.auraSenders = {};
-	StatAurasSyncModule.whitelistMode = true;
+	StatAurasSyncModule.whitelistMode = false;
 	StatAurasSyncModule.blockedSenders = {};
 	StatAurasSyncModule.whitelistedSenders = {};
 	StatAurasSyncModule.autoWhitelist = true;
+	StatAurasSyncModule.raidMode = true;
 end
 ---------------------------------------------------
 -- Локальные функции
@@ -172,36 +173,48 @@ end
 ---------------------------------------------------
 SLASH_SAGMTog1 = "/SAGMToggle" or "/sagmtoggle" or "/SAGMTOGGLE" or "/sagmToggle";
 SlashCmdList.SAGMTog = function()
-	if StatAurasSyncModule.isGM then
-		print(status_aura_prefix, "Вы отключили режим ведущего. Теперь вы снова получаете информацию об аурах от других игроков при входе в игру или присоединении к группе.");
-	else
-		print(status_aura_prefix, "Вы включили режим ведущего. Теперь вы не будете получать информацию об аурах от других игроков при входе в игру или присоединении к группе.");
-	end
-
 	StatAurasSyncModule.isGM = not StatAurasSyncModule.isGM;
+
+	if StatAurasSyncModule.isGM then
+		print(status_aura_prefix, "Вы включили режим ведущего. Теперь вы не будете получать информацию об аурах от других игроков при входе в игру или присоединении к группе.");
+	else
+		print(status_aura_prefix, "Вы отключили режим ведущего. Теперь вы снова получаете информацию об аурах от других игроков при входе в игру или присоединении к группе.");
+	end
 end
 
 SLASH_SAModeSwitch1 = "/SAModeSwitch" or "/samodeswitch" or "/SAMODESWITCH" or "/saModeSwitch";
 SlashCmdList.SAModeSwitch = function()
+	StatAurasSyncModule.whitelistMode = not StatAurasSyncModule.whitelistMode;
+
 	if StatAurasSyncModule.whitelistMode then
-		print(status_aura_prefix, "|cff6339C3Вы переключились на режим |cff606060чёрного списка|r.|r Теперь вы получаете информацию об аурах от всех игроков, не находящихся в чёрном списке.");
-	else
 		AutoWhitelistPriorities();
 		print(status_aura_prefix, "|cff6339C3Вы переключились на режим |cffFFFFFFбелого списка|r.|r Теперь вы получаете информацию об аурах только от игроков, находящихся в белом списке.");
+	else
+		print(status_aura_prefix, "|cff6339C3Вы переключились на режим |cff606060чёрного списка|r.|r Теперь вы получаете информацию об аурах от всех игроков, не находящихся в чёрном списке.");
 	end
+end
 
-	StatAurasSyncModule.whitelistMode = not StatAurasSyncModule.whitelistMode;
+SLASH_SARaidModeToggle1 = "/SARaidMode" or "/saraidmode" or "/SARAIDMODE" or "/saRaidMode";
+SlashCmdList.SARaidModeToggle = function()
+	StatAurasSyncModule.raidMode = not StatAurasSyncModule.raidMode;
+	StatAuras.Funcs.ChannelSet();
+
+	if StatAurasSyncModule.raidMode then
+		print(status_aura_prefix, "Вы |cff1EC724включили|r режим |cffFF6200рейдовой рассылки|r. Теперь вы обмениваетесь информацией об аурах только внутри группы/рейда.");
+	else
+		print(status_aura_prefix, "Вы |cffC61E1Eотключили|r режим |cffFF6200рейдовой рассылки|r. Теперь вы обмениваетесь информацией об аурах со всеми игроками в канале " .. channelName .. ".");
+	end
 end
 
 SLASH_SAAWLToggle1 = "/SAAWLToggle" or "/saawltoggle" or "/SAAWLTOGGLE" or "/saawlToggle" or "/SAawlToggle" or "/saAWLToggle" or "/saAWLtoggle";
 SlashCmdList.SAAWLToggle = function()
-	if StatAurasSyncModule.autoWhitelist then
-		print(status_aura_prefix, "Вы отключили автоматическое добавление персонажей в |cffFFFFFFбелый|r список.");
-	else
-		print(status_aura_prefix, "Вы включили автоматическое добавление персонажей в |cffFFFFFFбелый|r список.");
-	end
-
 	StatAurasSyncModule.autoWhitelist = not StatAurasSyncModule.autoWhitelist;
+
+	if StatAurasSyncModule.autoWhitelist then
+		print(status_aura_prefix, "Вы включили автоматическое добавление персонажей в |cffFFFFFFбелый|r список.");
+	else
+		print(status_aura_prefix, "Вы отключили автоматическое добавление персонажей в |cffFFFFFFбелый|r список.");
+	end
 end
 
 SLASH_SACustomSender1 = "/SASetSender" or "/sasetsender" or "/SASETSENDER" or "/saSetSender";
@@ -307,7 +320,7 @@ end
 ---------------------------------------------------
 function StatAuras.Funcs.ChannelSet()
 	channelID = GetChannelName("xtensionxtooltip2");
-	if channelID == 0 then
+	if StatAurasSyncModule.raidMode or channelID == 0 then
 		channel = "RAID";
 		channelID = nil;
 	else
@@ -345,41 +358,20 @@ function StatAuras.Funcs.SendAurasOnSet(unit_type)
 end
 
 function StatAuras.Funcs.QueryHandler(prefix, message, distribution, sender)
-	if ( prefix == "SA_CharOnEnterQ" ) then
-		local SoR = LibParse:JSONEncode(StatAurasDatabase);			-->	SoR = Send or Receive
-		SoR = LibDeflate:CompressDeflate(SoR);
-		SoR = LibDeflate:EncodeForWoWAddonChannel(SoR);
-
-		AceComm:SendCommMessage("SA_CharOnEnterR", SoR, "WHISPER", sender, "BULK");
-	--=====================================================================================--
-	elseif ( prefix == "SA_CharOnEnterR" ) then
-		if SomeBodysUtils:tableContains(StatAurasSyncModule.blockedSenders, sender) then				--> Проверка, не заблокирован ли отправляющий
-			return 2;
+	if ( prefix == "SA_SendOnSetQ" ) and ( sender ~= UnitName("PLAYER") ) then
+		if not (distribution == channel) and not (UnitInParty(sender)) then
+			return 3;
 		end
 		if StatAurasSyncModule.whitelistMode then
 			if not SomeBodysUtils:tableContains(StatAurasSyncModule.whitelistedSenders, sender) then	--> Проверка, в вайтлисте ли отправляющий
 				return 1;
 			end
-		end
-
-		local SoR = LibDeflate:DecodeForWoWAddonChannel(message);	-->	SoR = Send or Receive
-		SoR = LibDeflate:DecompressDeflate(SoR);
-		SoR = LibParse:JSONDecode(SoR);
-
-		StatAurasDatabase = SoR;
-		StatAuras.Funcs.DisplayAurasUpdate("player", SA_PlayerAurasAnchor);
-		StatAuras.Funcs.DisplayAurasUpdate("target", SA_TargetAurasAnchor);
-	--=====================================================================================--
-	elseif ( prefix == "SA_SendOnSetQ" ) and ( sender ~= UnitName("PLAYER") ) then
-		if SomeBodysUtils:tableContains(StatAurasSyncModule.blockedSenders, sender) then				--> Проверка, не заблокирован ли отправляющий
-			return 2;
-		end
-		if StatAurasSyncModule.whitelistMode then
-			if not SomeBodysUtils:tableContains(StatAurasSyncModule.whitelistedSenders, sender) then	--> Проверка, в вайтлисте ли отправляющий
-				return 1;
+		else
+			if SomeBodysUtils:tableContains(StatAurasSyncModule.blockedSenders, sender) then			--> Проверка, не заблокирован ли отправляющий
+				return 2;
 			end
 		end
-		
+
 		local SoR = LibDeflate:DecodeForWoWAddonChannel(message);	-->	SoR = Send or Receive
 		SoR = LibDeflate:DecompressDeflate(SoR);
 		SoR = LibParse:JSONDecode(SoR);
@@ -392,6 +384,32 @@ function StatAuras.Funcs.QueryHandler(prefix, message, distribution, sender)
 			StatAurasDatabase.NPCAuras[guid] = SoR[3];
 		end
 
+		StatAuras.Funcs.DisplayAurasUpdate("player", SA_PlayerAurasAnchor);
+		StatAuras.Funcs.DisplayAurasUpdate("target", SA_TargetAurasAnchor);
+	--=====================================================================================--
+	elseif ( prefix == "SA_CharOnEnterQ" ) then
+		local SoR = LibParse:JSONEncode(StatAurasDatabase);			-->	SoR = Send or Receive
+		SoR = LibDeflate:CompressDeflate(SoR);
+		SoR = LibDeflate:EncodeForWoWAddonChannel(SoR);
+
+		AceComm:SendCommMessage("SA_CharOnEnterR", SoR, "WHISPER", sender, "BULK");
+	--=====================================================================================--
+	elseif ( prefix == "SA_CharOnEnterR" ) and ( sender == activeSender ) then
+		if StatAurasSyncModule.whitelistMode then
+			if not SomeBodysUtils:tableContains(StatAurasSyncModule.whitelistedSenders, sender) then	--> Проверка, в вайтлисте ли отправляющий
+				return 1;
+			end
+		else
+			if SomeBodysUtils:tableContains(StatAurasSyncModule.blockedSenders, sender) then			--> Проверка, не заблокирован ли отправляющий
+				return 2;
+			end
+		end
+
+		local SoR = LibDeflate:DecodeForWoWAddonChannel(message);	-->	SoR = Send or Receive
+		SoR = LibDeflate:DecompressDeflate(SoR);
+		SoR = LibParse:JSONDecode(SoR);
+
+		StatAurasDatabase = SoR;
 		StatAuras.Funcs.DisplayAurasUpdate("player", SA_PlayerAurasAnchor);
 		StatAuras.Funcs.DisplayAurasUpdate("target", SA_TargetAurasAnchor);
 	end

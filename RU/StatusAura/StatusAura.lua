@@ -64,17 +64,18 @@ SlashCmdList.SAHELP = function()
 		print("|cffBA6EE6[StatusAura |cff9CE1E6Sync_Module|r|cff6339C3]|r |cffFFB266Доступные команды:|r");
 		print("|cff9CE1E61.|r |cff9CE1E6/sagmToggle|r |cffFFB266- включить/отключить |cff9CE1E6режим ведущего|r|cffFFB266.|r");
 		print("|cff9CE1E62.|r |cff9CE1E6/saModeSwitch|r |cffFFB266- переключить режим получения аур на |cff606060чёрный|r/|cffFFFFFFбелый|r список.|r");
-		print("|cff9CE1E63.|r |cff9CE1E6/saAWLtoggle|r |cffFFB266- включить/отключить |cff9CE1E6автоматическое добавление|r избранного отправителя аур, лидера рейда и его помощников в |cffFFFFFFбелый|r список|cffFFB266.|r");
-		print("|cff9CE1E64.|r |cff9CE1E6/saSetSender|r |cffFFB266- указать персонажа-цель как предпочтительный источник новых аур.|r");
-		print("|cff9CE1E65.|r |cff9CE1E6/saBlockSender|r |cff9CE1E6- |cffC61E1Eзаблокировать|cffFFB266 получение новых/обновление старых аур от персонажа-цели.|r");
-		print("|cff9CE1E66.|r |cff9CE1E6/saWhitelistSender|r |cff9CE1E6- |cff1EC724разрешить|cffFFB266 получение новых/обновление старых аур от персонажа-цели.|r");
-		print("|cff9CE1E67.|r |cff9CE1E6/saGetSender|r |cffFFB266- выписать персонажа, от которого вы получаете ауры при входе в игру.|r");
-		print("|cff9CE1E68.|r |cff9CE1E6/saGetPriority|r |cffFFB266- выписать список персонажей-отправителей аур в порядке приоритета.|r");
-		print("|cff9CE1E69.|r |cff9CE1E6/saGetCustomSender|r |cffFFB266- выписать персонажа, который является предпочтительным для получения аур при входе в игру.|r");
-		print("|cff9CE1E610.|r |cff9CE1E6/saGetBlockedSenders|r |cffFFB266- выписать персонажей, получение аур от которых вы |cffC61E1Eзаблокировали|r.|r");
-		print("|cff9CE1E611.|r |cff9CE1E6/saGetWhitelistedSenders|r |cffFFB266- выписать персонажей, получение аур от которых вы |cff1EC724разрешили|r.|r");
-		print("|cff9CE1E612.|r |cff9CE1E6/saClearBlacklist|r |cffFFB266- очистить |cff606060чёрный список|r отправителей.|r");
-		print("|cff9CE1E613.|r |cff9CE1E6/saClearWhitelist|r |cffFFB266- очистить |cffFFFFFFбелый список|r отправителей.|r");
+		print("|cff9CE1E63.|r |cff9CE1E6/saRaidMode|r |cffFFB266- включить/отключить режим |cffFF6200рейдовой рассылки|r.");
+		print("|cff9CE1E64.|r |cff9CE1E6/saAWLtoggle|r |cffFFB266- включить/отключить |cff9CE1E6автоматическое добавление|r избранного отправителя аур, лидера рейда и его помощников в |cffFFFFFFбелый|r список|cffFFB266.|r");
+		print("|cff9CE1E65.|r |cff9CE1E6/saSetSender|r |cffFFB266- указать персонажа-цель как предпочтительный источник новых аур.|r");
+		print("|cff9CE1E66.|r |cff9CE1E6/saBlockSender|r |cff9CE1E6- |cffC61E1Eзаблокировать|cffFFB266 получение новых/обновление старых аур от персонажа-цели.|r");
+		print("|cff9CE1E67.|r |cff9CE1E6/saWhitelistSender|r |cff9CE1E6- |cff1EC724разрешить|cffFFB266 получение новых/обновление старых аур от персонажа-цели.|r");
+		print("|cff9CE1E68.|r |cff9CE1E6/saGetSender|r |cffFFB266- выписать персонажа, от которого вы получаете ауры при входе в игру.|r");
+		print("|cff9CE1E69.|r |cff9CE1E6/saGetPriority|r |cffFFB266- выписать список персонажей-отправителей аур в порядке приоритета.|r");
+		print("|cff9CE1E610.|r |cff9CE1E6/saGetCustomSender|r |cffFFB266- выписать персонажа, который является предпочтительным для получения аур при входе в игру.|r");
+		print("|cff9CE1E611.|r |cff9CE1E6/saGetBlockedSenders|r |cffFFB266- выписать персонажей, получение аур от которых вы |cffC61E1Eзаблокировали|r.|r");
+		print("|cff9CE1E612.|r |cff9CE1E6/saGetWhitelistedSenders|r |cffFFB266- выписать персонажей, получение аур от которых вы |cff1EC724разрешили|r.|r");
+		print("|cff9CE1E613.|r |cff9CE1E6/saClearBlacklist|r |cffFFB266- очистить |cff606060чёрный список|r отправителей.|r");
+		print("|cff9CE1E614.|r |cff9CE1E6/saClearWhitelist|r |cffFFB266- очистить |cffFFFFFFбелый список|r отправителей.|r");
 	end
 end
 ---------------------------------------------------
